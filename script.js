@@ -96,11 +96,12 @@ function getBooleanValue(value) {
 
 function calculateLearningScore(record) {
   const duration = Number(record.durationMinutes);
-  const durationScore = Number.isFinite(duration) && duration > 0 ? Math.min(25, Math.round((duration / 120) * 25)) : 0;
+  const durationScore = Number.isFinite(duration) && duration > 0 ? Math.min(20, Math.round((duration / 120) * 20)) : 0;
   const taskScore =
-    (getBooleanValue(record.aiProgrammingDone) ? 25 : 0) +
-    (getBooleanValue(record.videoMaterialDone) ? 25 : 0) +
-    (getBooleanValue(record.reviewNotesDone) ? 25 : 0);
+    (getBooleanValue(record.aiProgrammingDone) ? 20 : 0) +
+    (getBooleanValue(record.videoMaterialDone) ? 20 : 0) +
+    (getBooleanValue(record.reviewNotesDone) ? 20 : 0) +
+    (getBooleanValue(record.cognitiveVideoDone) ? 20 : 0);
 
   return Math.min(100, durationScore + taskScore);
 }
@@ -130,6 +131,7 @@ function normalizeRecord(record) {
     date: dateKey,
     durationMinutes: getLegacyDuration(record),
     learningContent: getLegacyLearningContent(record),
+    videoLearning: String(record.videoLearning || record.videoLearningNotes || record.cognitiveVideoLearning || "").trim(),
     problems: String(record.problems || "").trim(),
     nextStep: String(record.nextStep || "").trim(),
     aiProgrammingDone: getBooleanValue(record.aiProgrammingDone) || Boolean(String(record.aiTask || record.aiLearning || "").trim()),
@@ -137,6 +139,9 @@ function normalizeRecord(record) {
       getBooleanValue(record.videoMaterialDone) ||
       Boolean(String(record.videoTask || record.editingTask || record.editingLearning || "").trim()),
     reviewNotesDone: getBooleanValue(record.reviewNotesDone) || Boolean(String(record.feedback || record.notes || "").trim()),
+    cognitiveVideoDone:
+      getBooleanValue(record.cognitiveVideoDone) ||
+      Boolean(String(record.videoLearning || record.videoLearningNotes || record.cognitiveVideoLearning || "").trim()),
   };
 
   return {
@@ -204,11 +209,13 @@ function recordHasContent(record) {
   return [
     "durationMinutes",
     "learningContent",
+    "videoLearning",
     "problems",
     "nextStep",
     "aiProgrammingDone",
     "videoMaterialDone",
     "reviewNotesDone",
+    "cognitiveVideoDone",
   ].some((key) => {
     const value = record[key];
     return value === true || value === 0 || String(value || "").trim();
@@ -256,11 +263,13 @@ function fillFormFromRecord(record) {
   dateInput.value = normalizeDateKey(record.date);
   form.elements.durationMinutes.value = record.durationMinutes || record.durationMinutes === 0 ? record.durationMinutes : "";
   form.elements.learningContent.value = record.learningContent || "";
+  form.elements.videoLearning.value = record.videoLearning || "";
   form.elements.problems.value = record.problems || "";
   form.elements.nextStep.value = record.nextStep || "";
   form.elements.aiProgrammingDone.checked = getBooleanValue(record.aiProgrammingDone);
   form.elements.videoMaterialDone.checked = getBooleanValue(record.videoMaterialDone);
   form.elements.reviewNotesDone.checked = getBooleanValue(record.reviewNotesDone);
+  form.elements.cognitiveVideoDone.checked = getBooleanValue(record.cognitiveVideoDone);
 }
 
 function loadSelectedDateIntoForm() {
@@ -287,11 +296,13 @@ function buildRecord(formData, existingRecord) {
     date: dateKey,
     durationMinutes: getFormValue(formData, "durationMinutes"),
     learningContent: getFormValue(formData, "learningContent"),
+    videoLearning: getFormValue(formData, "videoLearning"),
     problems: getFormValue(formData, "problems"),
     nextStep: getFormValue(formData, "nextStep"),
     aiProgrammingDone: formData.get("aiProgrammingDone") === "on",
     videoMaterialDone: formData.get("videoMaterialDone") === "on",
     reviewNotesDone: formData.get("reviewNotesDone") === "on",
+    cognitiveVideoDone: formData.get("cognitiveVideoDone") === "on",
   };
 
   return {
@@ -344,6 +355,7 @@ function renderRecords() {
             ${renderRecordField("判断", record.judgement)}
             ${renderRecordField("学习时长", record.durationMinutes, formatDuration)}
             ${renderRecordField("学习内容", record.learningContent)}
+            ${renderRecordField("视频学习到了什么", record.videoLearning)}
             ${renderRecordField("遇到的问题", record.problems)}
             ${renderRecordField("明天下一步任务", record.nextStep)}
           </div>
