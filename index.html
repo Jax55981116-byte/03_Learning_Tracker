@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Jax Learning Tracker</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="header">
+        <div>
+          <h1>Jax Learning Tracker</h1>
+          <p>极简每日学习记录：日期、时长、内容、问题和明天任务。</p>
+        </div>
+        <div class="header-actions">
+          <button class="primary-button" type="submit" form="recordForm">保存学习记录</button>
+          <button id="exportBtn" class="secondary-button" type="button">导出 JSON</button>
+          <label class="file-button">
+            导入 JSON
+            <input id="importInput" type="file" accept="application/json,.json" />
+          </label>
+          <button id="resetFormBtn" class="secondary-button" type="button">清空表单</button>
+          <button id="clearBtn" class="danger-button" type="button">清空全部</button>
+        </div>
+      </section>
+
+      <section class="panel">
+        <form id="recordForm" class="record-form" novalidate>
+          <label class="field">
+            日期
+            <input id="date" name="date" type="date" required />
+          </label>
+
+          <label class="field">
+            学习时长（分钟）
+            <input id="durationMinutes" name="durationMinutes" type="number" min="0" step="1" placeholder="例如 90" />
+          </label>
+
+          <fieldset class="score-options">
+            <legend>今日学习评分项</legend>
+            <label>
+              <input id="aiProgrammingDone" name="aiProgrammingDone" type="checkbox" />
+              AI 编程
+            </label>
+            <label>
+              <input id="videoMaterialDone" name="videoMaterialDone" type="checkbox" />
+              视频剪辑 / 素材整理
+            </label>
+            <label>
+              <input id="reviewNotesDone" name="reviewNotesDone" type="checkbox" />
+              复盘笔记
+            </label>
+          </fieldset>
+
+          <label class="field field-wide">
+            学习内容
+            <textarea id="learningContent" name="learningContent" rows="5"></textarea>
+          </label>
+
+          <label class="field field-wide">
+            遇到的问题
+            <textarea id="problems" name="problems" rows="3"></textarea>
+          </label>
+
+          <label class="field field-wide">
+            明天下一步任务
+            <textarea id="nextStep" name="nextStep" rows="3"></textarea>
+          </label>
+
+          <p id="formMessage" class="form-message" role="status" aria-live="polite"></p>
+
+          <div class="form-actions">
+            <button class="secondary-button" id="bottomResetFormBtn" type="button">清空表单</button>
+            <button class="primary-button" type="submit">保存学习记录</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="history-section">
+        <div class="section-heading">
+          <h2>历史记录</h2>
+          <p id="recordCount">0 条记录</p>
+        </div>
+        <div id="recordsList" class="records-list"></div>
+      </section>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>
